@@ -6,8 +6,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	calc "sample-app/Desktop/service_GO/web_go_calc/calculate"
+
+	//calc "sample-app/Desktop/service_GO/web_go_calc/calculate"
 	"strings"
-	//calc "github.com/Danilka776/web_go_calc/calculate"
 )
 
 type RequestBody struct {
@@ -57,12 +59,11 @@ func (a *Application) Run() error {
 			log.Println("application was successfully closed")
 			return nil
 		}
-		//вычисляем выражение
-		result, err := Calc(text)
+		result, err := calc.Calc(text)
 		if err != nil {
-			log.Println(text, " calculation failed wit error: ", err)
+			log.Println(text, " calculation failed")
 		} else {
-			log.Println(text, "=", result)
+			log.Println(text, " = ", result)
 		}
 	}
 }
@@ -82,7 +83,7 @@ func calculateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	infix := strings.TrimSpace(reqBody.Expression)
-	res, err := Calc(infix)
+	res, err := calc.Calc(infix)
 	if err != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity) // 422
 		json.NewEncoder(w).Encode(ErrorResponse{Error: "Expression is not valid"})
@@ -94,7 +95,7 @@ func calculateHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func main() {
+func (a *Application) RunServer() error {
 	http.HandleFunc("/api/v1/calculate", calculateHandler)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError) // 500
@@ -103,4 +104,5 @@ func main() {
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic("Internal server error")
 	}
+	return nil
 }
