@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	calc "sample-app/Desktop/service_GO/web_go_calc/calculate"
+	calc "github.com/Danilka776/web_go_calc/calculate"
 
 	//calc "sample-app/Desktop/service_GO/web_go_calc/calculate"
 	"strings"
